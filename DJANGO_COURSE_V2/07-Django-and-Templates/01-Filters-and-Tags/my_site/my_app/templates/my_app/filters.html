@@ -1,0 +1,58 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    {% comment %} https://docs.djangoproject.com/en/3.2/ref/templates/builtins/#ref-templates-builtins-filters {% endcomment %}
+    <h1>{{first_name | upper}}</h1>
+    {% comment %} TAGS {% endcomment %}
+    {% lorem %}
+    <h1>{% now "jS \o\f F" %}</h1>
+
+    {% comment %}  {% endcomment %}
+    <ul>
+    {% for item in some_list  %}
+    
+        <li>{{item}}</li>
+    
+    {% endfor %}
+</ul>
+
+
+   {% comment %}  {% endcomment %}
+   <ul>
+    {% for item in some_list  %}
+
+    {% if item == 2 %}
+       <p>if statement triggered</p>
+    
+    {% endif %}
+    
+        <li>{{item}}</li>
+    
+    {% endfor %}
+</ul>
+
+  {% comment %}  {% endcomment %}
+  <ul>
+    {% for item in some_list  %}
+
+    {% if item == 2 %}
+       <li>TWO</li>
+       {% else %}
+       <li>{{item}}</li>
+    {% endif %}
+    
+       
+    
+    {% endfor %}
+</ul>
+    
+<h1><a href="{% url 'my_app:home' %}">HOME</a></h1>
+    
+</body>
+</html>

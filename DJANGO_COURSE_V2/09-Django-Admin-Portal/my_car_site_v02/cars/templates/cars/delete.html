@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content%}
+
+<div class='container'>
+    <h1>DELETE.HTML</h1>
+    
+    <form action="" method='POST'>
+
+        {% csrf_token %}
+
+        <div class="form-group">
+        <label for="pk">PK NUMBER</label>
+        <input  id='pk' class="form-control" type="text" name='pk'>
+        </div> 
+        
+        <input type="submit">
+
+    </form>
+</div>
+<h1>{{issue}}</h1>
+{% endblock%}

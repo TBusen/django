@@ -1,0 +1,22 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Form</h1>
+    <form method="POST">
+        <!-- https://docs.djangoproject.com/en/4.0/topics/forms/#looping-over-the-form-s-fields -->
+        {% csrf_token %}
+            {% for field in form %}
+            <div class='myform'>
+                {{ field.label_tag }} {{ field }} {{ field.errors }}
+            </div>
+               
+            {% endfor %}
+        <input type="submit">
+    </form>
+</body>
+</html>
