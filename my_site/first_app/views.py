@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, Http404, HttpResponseRedirect
+
 
 
 articles = {
@@ -9,21 +10,18 @@ articles = {
 }
 
 
-def simple_view(request):
-    return HttpResponse("Simple View in First_App")
+def news_view(request, topic):
+    try:
+        result = articles[topic]
+        return HttpResponse(articles[topic])
+    except:
+        raise Http404(("404 generic Error"))
 
+#domain.com/first_app/0 --> domain.com/first_app/sports
 
-#def sports_view(request):
-#    return HttpResponse(articles.get("sports"))
+def num_page_view(request, num_page):
 
+    topics_list = list(articles.keys())
+    topic = topics_list[num_page]
+    return HttpResponseRedirect(topic)
 
-#def finance_view(resquest):
-#    return HttpResponse(articles.get("finance"))
-
-def news_view(request, topic: str):
-    return HttpResponse(articles.get(topic))
-
-def add_view(request, num1: int, num2: int):
-    #domain.com/first_app/3/4 --> 7
-    result = num1 + num2
-    return HttpResponse((str(result)))
