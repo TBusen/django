@@ -6,8 +6,9 @@
     <title>Document</title>
   </head>
   <body>
-    <h1>VARIABLE . HTML!</h1>
-    <ul>
+    <h1>VARIABLE HTML Template</h1>
+    <h2><a href="{%url 'my_app:example'%}">Click Me to go to Example</a></h2>
+ {% comment %}    <ul>
       {% for num in some_list %}
        {% if num == 2 %}
            <li>TWO</li>
@@ -15,7 +16,7 @@
            <li>{{num}}</li>
       {% endif %} 
       {% endfor %}
-    </ul>
+    </ul> {% endcomment %}
     {% comment %}
     <h2>Her last name was {{last_name | lower | capfirst}}</h2>
     <h3>{{some_list.2}}</h3>
