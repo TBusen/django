@@ -1,9 +1,12 @@
 
 {% extends 'base.html' %}
+{% load  static  %}
 
 {% block content %}
 
 <h1>this is inside the block in example.html</h1>
+<img src="{%static 'my_app/bears.jpg' %}" alt="my image">
+
 
 {% endblock content %}
 
