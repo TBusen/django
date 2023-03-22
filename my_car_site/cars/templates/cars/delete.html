@@ -3,5 +3,21 @@
 {% block content %}
 
 <h1>delete.html</h1>
+<h2>enter pk to delete car</h2>
+<div class='container'>
+<form action="" method="POST">
+{% csrf_token %}
+
+<div  class="form-group">
+    <label for="pk">Primary Key</label>
+    <input class="form-control" type="text" id='pk' name='pk'>
+</div>
+
+<br>
+<input class='btn btn-primary' type="submit">
+</form>
+
+
+</div>
 
 {% endblock %}
