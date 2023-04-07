@@ -1,14 +1,10 @@
 # Starting a New Project
-<br>
-<br>
 
 ## Set up virtual environment
 
 ```bash
 conda create --name python=3.11
 ```
-<br>
-<br>
 
 Now activate the environment and install required packages
 
@@ -17,7 +13,7 @@ conda activate <name>
 ```
 
 ## Create new Project
-<br>
+
 Use Django Admin to create a new project
 
 ```bash
@@ -55,11 +51,9 @@ We've now added the structure
        |- tests.py
 ```
 ## Setting up application
-<br>
 
 Setting up the application requires adding the following to the standard configuration from startapp
 
-<br>
 Create New templates directory and html files under app_name
 
 
@@ -77,7 +71,6 @@ Create New templates directory and html files under app_name
        |-- tests.py
 ```
 
-<br>
 
 For this example we will use home.html as a landing page which is now in our templates folder.  We need to create and connect your view to this template.
 
@@ -235,19 +228,152 @@ python manage.py makemigrations
 
 This only preps the migrations, it doesn't actually persist anything yet.
 
-``bash
+```bash
 python manage.py migrate
 ```
+
 Now it is migrated.
 
-!!! warning Undetected Migrations
+!!! warning "Undetected Migrations"
 
     If your application name is not defined under INSTALLED_APPS in settings.py then any changes will not be picked up with the above commands.
 
 
+Verify that home.html is displaying by starting the dev server
 
-!!! note
+```bash
+python manage.py runserver 8080
+```
 
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla et euismod
-    nulla. Curabitur feugiat, tortor non consequat finibus, justo purus auctor
-    massa, nec semper lorem quam in massa.
+## Generic Views
+
+### TemplateView
+
+Some views are very common and for those Django has generic views.  The work is repetitive (link view to template).  One of those views is template view.
+
+
+```python
+from django.shortcuts import render
+from django.views.generic import TemplateView
+
+
+# Create your views here.
+# def home_view(request):
+#     return render(request, "classroom/home.html")
+
+
+class HomeView(TemplateView):
+    template_name = "classroom/home.html"
+```
+import the TemplateView class from django.  This is what your class-based view inherits.  What is required is to set the *template_name* variable to the template location.  There isn't much difference compared to the function-based view above in terms of simplicity, but the advantages will become more evident later.  
+
+We have to now register this new class view with urls.py so that it can render
+
+```python
+from django.urls import path
+#from .views import home_view
+from .views import HomeView
+
+app_name = "classroom"
+
+urlpatterns = [
+    #path("", home_view, name="home")
+	path("", HomeView.as_view(), name="home")
+    ]
+```
+
+Import the class inot urls.py.  Since *path* expects a function we just have to call the *as_view* method on the class to satisfy this.
+
+Assuming a thank you page is created, how do we reference other pages?
+
+Inside our home.html:
+
+```html
+<h1>Welcome to home.html</h1>
+
+<ul>
+	<li>
+		<a href="{%url "classroom:thank_you"%}">Thank You Page Link</a>
+	</li>
+</us>
+
+```
+
+Using django templating, we use the %url magic.  "classroom:thank_you" is what we registered the thank you view under in url.py
+
+```python
+from django.urls import path
+
+# from .views import home_view
+from .views import HomeView, ThankYou
+
+app_name = "classroom"
+
+urlpatterns = [
+    # path("", home_view, name="home")
+    path("", HomeView.as_view(), name="home"),
+    path("thank_you", ThankYou.as_view(), name="thank_you"),
+]
+```
+
+!!! info "TemplateView Usage"
+    TemplateView should really only be used when we expect most of the work to be done on the template side of things ie in the html
+
+### FormView
+
+First, create a simple form, here we are creating a new template called contact.html
+
+```html
+<h1>Contact Form Template</h1>
+
+<form method="POST">
+  {% csrf_token %}
+   {{form.as_p}}
+  <input type="submit" , value="submit" />
+</form>
+```
+
+Next, create a new forms.py file for our classroom application.
+
+```python
+from django import forms
+
+class ContactForm(forms.Form):
+    name = forms.CharField()
+    message = forms.CharField(widget=forms.Textarea)
+```
+
+Finally, connect to the new form view
+
+```python
+class ContactFormView(FormView):
+    form_class = ContactForm
+    template_name = "classroom/contact.html"
+
+    # success URL?
+    success_url = '/classroom/thank_you/'
+
+    # what do do with form
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return super().form_valid(form)
+```
+form_class is the name of your form class in forms.py.  Template name is the name of the html template to render.  success_url is the actual url path to go after success of the form submission, this is not the template path.  Then, create a form_valid method to define what to do with the actual form.  Here we are just printing the cleaned_data and then returning the valid form data using the form_valid method inherited from FormView.
+
+!!! note "Using Reverse Lazy"
+    if you instead want to refer to the url routing then you can use reverse_lazy
+
+    ```python
+     success_url = reverse_lazy("classroom:thank_you")
+     ```
+
+As a last step, link the new view in urls.py
+
+```python
+urlpatterns = [
+    # path("", home_view, name="home")
+    path("", HomeView.as_view(), name="home"),
+    path("thank_you/", ThankYou.as_view(), name="thank_you"),
+    path("contact/", ContactFormView.as_view(), name="contact"),
+]
+```

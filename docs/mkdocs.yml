@@ -5,6 +5,5 @@ markdown_extensions:
   - pymdownx.details
   - pymdownx.superfences
 
-plugins:
-  - search
-  - callouts
+theme:
+  name: material
