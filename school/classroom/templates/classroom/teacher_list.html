@@ -1,0 +1,7 @@
+<h1>Teacher List View</h1>
+<ul>
+  {% for teacher in object_list %}
+
+  <li>{{teacher.first_name}} {{teacher.last_name}}</li>
+  {% endfor %}
+</ul>

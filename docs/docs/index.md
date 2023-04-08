@@ -377,3 +377,34 @@ urlpatterns = [
     path("contact/", ContactFormView.as_view(), name="contact"),
 ]
 ```
+
+### CreateView
+
+> This is a model-based view, meaning that it will connect and directly interact with our backend.
+
+
+```python
+class TeacherCreateView(CreateView):
+    model = Teacher
+    fields = "__all__"
+    success_url = reverse_lazy("classroom:thank_you")
+```
+
+Import the *Teacher* model from classroom.models and *CreateView* from django.views.generic.  This CBV will connect to the Teacher model and make available all fields.  Using reverse_lazy we will be redirected to the thank you page if successful.
+
+How does this CBV know which html file to look for?  The pattern it is looking for is **model_form.html**, so in this case we need to have a teacher_form.html file.
+
+In our teacher_form.html we would have the following:
+
+```html
+<h1>Teacher Form</h1>
+<form method="POST">
+  {% csrf_token %}
+   {{form.as_p}}
+  <input type="submit" value="Submit" />
+</form>
+```
+
+### ListView
+
+Now that we have our CBV, we will create a List view to show the contents of this table.
