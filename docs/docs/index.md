@@ -470,3 +470,15 @@ Now reference teacher_list in our for loop inside teacher_list.html template
   {% endfor %}
 </ul>
 ```
+
+We can override the default query behavior
+
+```python
+class TeacherListView(ListView):
+    # looking for model_list.html
+    model = Teacher
+    context_object_name = "teacher_list"
+    #default query set
+    #queryset = Teacher.objects.all()
+    queryset = Teacher.objects.order_by('first_name')
+```
