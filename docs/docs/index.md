@@ -408,3 +408,65 @@ In our teacher_form.html we would have the following:
 ### ListView
 
 Now that we have our CBV, we will create a List view to show the contents of this table.
+
+```python
+class TeacherListView(ListView):
+    # looking for model_list.html
+    model = Teacher
+```
+Import ListView and create a new CBV.  Inherit from ListView.  The only thing that needs referenced is the Model, which is Teacher in our example.  This wil be looking for template of the pattern model_list.html.
+
+Lets create our teacher_list.html view now.
+
+```html
+<h1>Teacher List View</h1>
+<ul>
+  {% for teacher in object_list %}
+
+  <li>{{teacher.first_name}} {{teacher.last_name}}</li>
+  {% endfor %}
+</ul>
+```
+
+Now reference the new view in urls.py.
+
+```python
+urlpatterns = [
+    # path("", home_view, name="home")
+    path("", HomeView.as_view(), name="home"),
+    path("thank_you/", ThankYou.as_view(), name="thank_you"),
+    path("contact/", ContactFormView.as_view(), name="contact"),
+    path("create_teacher/", TeacherCreateView.as_view(), name="create_teacher"),
+    path("list_teacher/", TeacherListView.as_view(), name="list_teacher"),
+
+]
+```
+
+Finally, add the teacher page to the home page list items
+
+```html
+	<li>
+			<a href="{%url "classroom:list_teacher"%}">List Teacher Page Link</a>
+		</li>
+```
+
+We can change the "object_list" name as so
+
+```python
+class TeacherListView(ListView):
+    # looking for model_list.html
+    model = Teacher
+    context_object_name = "teacher_list"
+```
+
+Now reference teacher_list in our for loop inside teacher_list.html template
+
+```html
+<h1>Teacher List View</h1>
+<ul>
+  {% for teacher in teacher_list %}
+
+  <li>{{teacher.first_name}} {{teacher.last_name}}</li>
+  {% endfor %}
+</ul>
+```

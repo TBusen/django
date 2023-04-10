@@ -28,6 +28,7 @@ class TeacherCreateView(CreateView):
 class TeacherListView(ListView):
     # looking for model_list.html
     model = Teacher
+    context_object_name = "teacher_list"
 
 
 class ContactFormView(FormView):
