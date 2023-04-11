@@ -482,3 +482,55 @@ class TeacherListView(ListView):
     #queryset = Teacher.objects.all()
     queryset = Teacher.objects.order_by('first_name')
 ```
+
+### DetailView
+
+This view allows you to pull a single row from the object given a PK
+
+```python
+class TeacherDetailView(DetailView):
+    model = Teacher
+    context_object_name = "teacher"
+```
+
+Setting up the view only requires the model to be referenced.  The template that will be used is the pattern model_detail.html.  So in this case we need to create a teacher_detail.html file.
+
+```html
+<h1>Teacher Detail View</h1>
+{{teacher}}
+```
+
+Setting up the template of the required pattern and then reference the contect object name in the template.  In this case we are referencing the teacher object.
+
+Now modify the teacher list view to be urls pointing to the detail view.
+
+```html
+<h1>Teacher List View</h1>
+<ul>
+  {% for teacher in teacher_list %}
+
+  <li>
+    <a href="/classroom/teacher_detail/{{teacher.id}}"
+      >{{teacher.first_name}} {{teacher.last_name}}</a
+    >
+  </li>
+
+  {% endfor %}
+</ul>
+```
+
+We loop through the rows in the teacher object pulling the pk and passing that into the url setup in urls.py for the detail view
+
+
+```python
+urlpatterns = [
+    # path("", home_view, name="home")
+    path("", HomeView.as_view(), name="home"),
+    path("thank_you/", ThankYou.as_view(), name="thank_you"),
+    path("contact/", ContactFormView.as_view(), name="contact"),
+    path("create_teacher/", TeacherCreateView.as_view(), name="create_teacher"),
+    path("list_teacher/", TeacherListView.as_view(), name="list_teacher"),
+    path("teacher_detail/<int:pk>/", TeacherDetailView.as_view(), name="teacher_detail"),
+]
+```
+
