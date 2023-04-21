@@ -534,3 +534,71 @@ urlpatterns = [
 ]
 ```
 
+### UpdateView
+
+This view allows you to update a single row from the object given a PK
+
+```python
+class TeacherUpdateView(UpdateView):
+    model = Teacher
+    fields = "__all__"
+    success_url = reverse_lazy("classroom:list_teacher")
+```
+
+We need to import UpdateView from django.views.generic.  We need to reference the model, in this case Teacher.  We need to reference the fields that we want to be able to update.  We need to reference the success url, in this case we want to be redirected to the list view.
+
+No we need to update urls.py to include the new view in urls.py
+
+Import the view and add the path to the url
+
+```python
+from .views import (
+    HomeView,
+    ThankYou,
+    ContactFormView,
+    TeacherCreateView,
+    TeacherListView,
+    TeacherDetailView,
+    TeacherUpdateView,
+)
+```
+
+
+```python
+urlpatterns = [
+    # path("", home_view, name="home")
+    path("", HomeView.as_view(), name="home"),
+    path("thank_you/", ThankYou.as_view(), name="thank_you"),
+    path("contact/", ContactFormView.as_view(), name="contact"),
+    path("create_teacher/", TeacherCreateView.as_view(), name="create_teacher"),
+    path("list_teacher/", TeacherListView.as_view(), name="list_teacher"),
+    path("teacher_detail/<int:pk>/", TeacherDetailView.as_view(), name="teacher_detail"),
+    path("teacher_update/<int:pk>/", TeacherUpdateView.as_view(), name="teacher_update"),
+]
+```
+
+Now we need to expose this view in the list view b/c this temaplate is already exposing the pk in the for loop.  We will add another anchor tag with an option to update the teacher.
+
+```html
+<h1>Teacher List View</h1>
+<ul>
+  {% for teacher in teacher_list %}
+
+  <li>
+    <a href="/classroom/teacher_detail/{{teacher.id}}"
+      >{{teacher.first_name}} {{teacher.last_name}}</a
+    >
+    <a href="/classroom/teacher_update/{{teacher.id}}"
+      >Update Teacher for {{teacher.first_name}}</a
+    >
+  </li>
+
+  {% endfor %}
+</ul>
+```
+
+Start the server to test the update view.
+
+```bash
+python manage.py runserver
+```
