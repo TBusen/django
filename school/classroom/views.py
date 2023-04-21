@@ -5,6 +5,7 @@ from django.views.generic import (
     CreateView,
     ListView,
     DetailView,
+    UpdateView,
 )
 from classroom.forms import ContactForm
 from django.urls import reverse_lazy
@@ -60,3 +61,10 @@ class TeacherDetailView(DetailView):
     context_object_name = "teacher"
     # template_name = "classroom/teacher_detail.html"
     # This sends to the template the teacher object for a given pk
+
+
+class TeacherUpdateView(UpdateView):
+    # shares model_form.html with create view
+    model = Teacher
+    fields = "__all__"  # or fields = ("first_name", "last_name", "subject")
+    success_url = reverse_lazy("classroom:list_teacher")
