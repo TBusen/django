@@ -6,6 +6,7 @@ from django.views.generic import (
     ListView,
     DetailView,
     UpdateView,
+    DeleteView,
 )
 from classroom.forms import ContactForm
 from django.urls import reverse_lazy
@@ -67,4 +68,12 @@ class TeacherUpdateView(UpdateView):
     # shares model_form.html with create view
     model = Teacher
     fields = "__all__"  # or fields = ("first_name", "last_name", "subject")
+    success_url = reverse_lazy("classroom:list_teacher")
+
+
+class TeacherDeleteView(DeleteView):
+    # default template name: model_confirm_delete.html
+    # Form --> Confirm Delete --> Delete
+    model = Teacher
+    # reroute to teacher list to ensure the teacher is deleted
     success_url = reverse_lazy("classroom:list_teacher")
