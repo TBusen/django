@@ -9,6 +9,7 @@ from .views import (
     TeacherListView,
     TeacherDetailView,
     TeacherUpdateView,
+    TeacherDeleteView,
 )
 
 app_name = "classroom"
@@ -25,5 +26,8 @@ urlpatterns = [
     ),
     path(
         "update_teacher/<int:pk>/", TeacherUpdateView.as_view(), name="update_teacher"
+    ),
+    path(
+        "delete_teacher/<int:pk>/", TeacherDeleteView.as_view(), name="delete_teacher"
     ),
 ]
