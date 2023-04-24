@@ -602,3 +602,60 @@ Start the server to test the update view.
 ```bash
 python manage.py runserver
 ```
+
+
+### DeleteView
+
+This allows you to delete a single row from the object given a PK
+
+Import DeleteView from django.views.generic
+
+```python
+from django.views.generic import (
+    CreateView,
+    ListView,
+    DetailView,
+    UpdateView,
+    DeleteView,
+)
+```
+
+Create the view in views.py.  Note that you also need to create a template with the naming `model_confirm_delete.html`
+
+```python
+class TeacherDeleteView(DeleteView):
+    # Form --> Confirm Delete --> Delete
+    model = Teacher
+    # reroute to teacher list to ensure the teacher is deleted
+    success_url = reverse_lazy("classroom:list_teacher")
+```
+
+Create your template `teacher_confirm_delete.html`
+
+```html
+<h1>Are you sure you want to delete this teacher?</h1>
+<h2>{{teacher}}</h2>
+
+<form method="POST">
+  {% csrf_token %}
+  <input type="submit" value="Confirm Delete" />
+</form>
+```
+
+All that is needed is a simple form with a submit button.  The form will be a POST request and will need a csrf token.  Optionally, we can add a H2 showing the current teach object about to be deleted.
+
+Add the path to urls.py
+
+```python
+urlpatterns = [
+    # path("", home_view, name="home")
+    path("", HomeView.as_view(), name="home"),
+    path("thank_you/", ThankYou.as_view(), name="thank_you"),
+    path("contact/", ContactFormView.as_view(), name="contact"),
+    path("create_teacher/", TeacherCreateView.as_view(), name="create_teacher"),
+    path("list_teacher/", TeacherListView.as_view(), name="list_teacher"),
+    path("teacher_detail/<int:pk>/", TeacherDetailView.as_view(), name="teacher_detail"),
+    path("teacher_update/<int:pk>/", TeacherUpdateView.as_view(), name="teacher_update"),
+    path("teacher_delete/<int:pk>/", TeacherDeleteView.as_view(), name="teacher_delete"),
+]
+```
