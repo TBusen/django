@@ -50,6 +50,22 @@ We've now added the structure
        |-- views.py
        |- tests.py
 ```
+## Register application
+
+With the application structure generated we need to register it with Django.  This is done in the site level settings.py file.  Add the application name to the INSTALLED_APPS list.
+
+```python
+INSTALLED_APPS = [
+    "school.apps.SchoolConfig",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+]
+```
+
 ## Setting up application
 
 Setting up the application requires adding the following to the standard configuration from startapp
@@ -145,46 +161,59 @@ urlpatterns = [
 
 We need to add the import of *include*.  Add to the urlpatterns list a new path indicating the routing of *domain.com/classroom/* should reference classroom.urls which is referenced by the registered app_name *classroom* and will point to the application level urls.py, which now points to the home_view.
 
+classroom url.py doesn't exist by default and you need to create it.  It is the same as the application level urls.py
 
-Next register the application config in the site level settings.py.  This name can be found in the application-level *apps.py*
-
-In this file we see this
-
-```python
-class ClassroomConfig(AppConfig):
-    default_auto_field = "django.db.models.BigAutoField"
-    name = "classroom"
+```bash
+|-- site_name
+   |-- site_name
+   |   |-- files
+   |-- manage.py
+   |-- app_name
+       |-- templates
+       |   |-- app_name
+       |        |-- home.html
+       |-- models.py
+       |-- views.py
+       |-- tests.py
+       |-- urls.py
+   |-- classroom
+       |-- templates
+       |   |-- classroom
+       |        |-- home.html
+       |-- models.py
+       |-- views.py
+       |-- tests.py
+       |-- urls.py
 ```
 
-Copy and paste the name <mark>ClassroomConfig</mark> and then register this in *site_name/settings.py* under INSTALLED_APPS
+The Contents of the application level urls.py (not site level) is:
+    
+```python
+from django.urls import path
+from . import views
 
-ClassroomConfig
+urlpatterns = [
+    path('', views.index, name='index')]
+```
+
+No create the index function based view in views.py
 
 ```python
-INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-]
+from django.shortcuts import render
+
+# Create your views here.
+def index(request):
+    return render(request, 'classroom/home.html')
 ```
-add the following
-```python
-'classroom.apps.ClassroomConfig'
-```
-```python
-INSTALLED_APPS = [
-    'classroom.apps.ClassroomConfig',
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-]
-```
+
+!!! Note "Redirecting"
+     If you want to redirect you can add this to urls.py.  In this example we redirect from home page to another page.
+    ```python
+    from django.views.generic import RedirectView
+
+    #add this line to urlpatters
+    path('', RedirectView.as_view(url='classroom/'))
+    ```
 
 ### Create the model
 
