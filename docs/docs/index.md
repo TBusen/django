@@ -688,3 +688,51 @@ urlpatterns = [
     path("teacher_delete/<int:pk>/", TeacherDeleteView.as_view(), name="teacher_delete"),
 ]
 ```
+
+## Create the models
+
+Populate the models for the Library application.  We will have models for Author, Book, and Publisher, etc.  Create these in the models.py file.
+
+```python
+class Genre(models.Model):
+    # this is a model representing a book genre
+
+	name = models.CharField(max_length=200, help_text="Enter a book genre (e.g. Science Fiction, French Poetry etc.)")
+
+	def __str__(self):
+		# string for representing the Model object
+		return self.name
+```
+
+Example of a model for Genre.  Genre inherits from models.model.  `models` is imported.  We have a single field, name, which is a CharField with a max length of 200.  We have a help text for the field.  We have a `__str__` method that returns the name of the genre.
+
+Another example
+
+```python
+class Author(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    # date of birth and death are optional
+    date_of_birth = models.DateField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ["last_name", "first_name"]
+        
+    def get_absolute_url(self):
+		# returns the url to access a particular author instance
+        return reverse("author_detail", kwargs={"pk": self.pk})
+        
+    def __str__(self):
+		# string for representing the Model object
+        return f"{self.last_name}, {self.first_name}"
+```
+
+The Author model has a first_name and last_name field.  The date_of_birth is optional.  We have a Meta class that will order the last_name and first_name.  We have a `get_absolute_url` method that will return the url to access a particular author instance.  We have a `__str__` method that will return the last_name, first_name.  Notice the get_absolute_url takes the primary key as an argument and then returns the url for the author_detail view.
+
+
+When models are complete you need to make mygrations and migrate
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
