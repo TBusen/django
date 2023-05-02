@@ -1,0 +1,18 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Home Page</h1>
+    <p>Total Books: {{ num_books }}</p>
+    <p>Total Available: {{ num_instances_available }}</p>
+    {% if user.is_authenticated %}
+      <p>You are autenticated as {{ user.get_username }}</p>
+    {% else %}
+      <p>You are not logged in</p>
+    {% endif %}
+  </body>
+</html>

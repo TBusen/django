@@ -736,3 +736,175 @@ When models are complete you need to make mygrations and migrate
 python manage.py makemigrations
 python manage.py migrate
 ```
+
+Next Step is to Register the models, create teh super user and create example instances
+
+
+register the model in admin.py
+
+```python
+from django.contrib import admin
+from .models import Author, Genre, Book, BookInstance, Language
+
+admin.site.register(Genre)
+admin.site.register(Language)
+admin.site.register(Book)
+admin.site.register(Author)
+admin.site.register(BookInstance)
+```
+
+
+create the superuser
+
+```bash
+python manage.py createsuperuser
+```
+
+
+Start the server and log into the admin panel
+
+```bash
+python manage.py runserver
+```
+
+
+After using the admin pane to populate data for the views and create a book instance we need to set up the views
+
+in views.py
+
+```python
+class BookCreate(CreateView):  # book_form.html
+    model = Book
+    fields = "__all__"
+    # initial = {"date_of_death": "05/01/2018"}
+    ```
+
+By default when a book is created it will redirect to the detail view.  We can change this by adding a `get_absolute_url` method to the model.  This will redirect to the detail view after the book is created.  However, we will create the detail view instead
+
+```python
+class BookDetailView(DetailView):
+    model = Book
+```
+
+We need templates for these views.  Django expects the pattern, model_viewtype.html.  So we need book_form.html and book_detail.html
+
+```bash
+touch templates/catalog/book_form.html && touch templates/catalog/book_detail.html
+```
+
+A simple form
+
+```html
+<h1>Create New Book</h1>
+
+<form action="" method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <input type="submit" value="Create Book" />
+</form>
+
+```
+
+And then dump the object in the detail template
+
+```html
+<h1>Book Detail that doesn't show detail</h1>
+{{book}}
+```
+
+!!! Note "Context Variables"
+    Take note that the object name is lowercase.  This is because the object is passed to the template as a context variable.  The context variable is the lowercase version of the model name.  So if the model is Book, the context variable is book.  If the model is Author, the context variable is author.
+
+
+## Security / User Model and Authentication
+
+Now that the site works.  We can add and view books, lets restrict who can do this.
+
+Step 1:  Create Groups
+
+In the admin panel, create two groups, Librarians and Patrons
+
+Step 2: Create users and put them in the groups
+
+In the admin panel create the user, save adn then add to the Partron groups.
+
+
+Now go to url.py for project level.  Include the django.contrib.auth.urls
+
+```python
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("catalog/", include("catalog.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
+]
+```
+
+To access this you go to url/accounts/login.  But you will get an error because we do not have a template set up.  Lets create that.  This authentication happens at a site level, not application.  So create a new template folder at the project level.
+
+```bash
+|-- library
+|   |-- catalog
+|   |-- library
+|   |-- templates
+|   |   |-- registration
+|   |   |   |-- login.html
+```
+
+add the following to the settings.py file
+
+```python
+import os
+
+# under TEMPLATES
+TEMPLATES = [
+    {
+        "DIRS": [os.path.join(BASE_DIR, "templates")],
+
+    }
+]
+```
+
+The login template needs to take in a couple different cases
+
+- Incorrect Login Params
+- Logged in but not authorized to view the page
+- Logged in and authorized to view the page
+
+```html
+{% if form.errors %}<p>Your username and password was incorrect. Try again</p>{% endif %}
+{% if next %}
+    {% if user.is_authenticated %}
+        <p>You don't have permission for this page</p>
+    {% else %}
+        <p>Please login to see this page</p>
+    {% endif %}
+{% endif %}
+<form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+    {{ form.username.label_tag }}}
+    {{ form.username }}
+    {{ form.password.label_tag }}
+    {{ form.password }}
+	<input type="submit" value="Login">
+	<input type="hidden" name="next" value="{{ next }}>
+</form>
+```
+
+- If there are errors on the form, return a message to try again
+- If `next` which means they are passed to the next page
+  - If the user is authenticated they get the message that they can't see the page
+  - Other wise they get the message to login to see the page
+- Otherwise they get the login form
+
+
+Logging in, Django automatically redirects you to /acounts/profile.  You can create this or define your own redirect in settings.py
+
+```python
+LOGIN_REDIRECT_URL = "/"
+```
+
+Now that authentication and redirect work, we need to decorate view to have them require or not require a user to be authenticated
+
+To do this, you use decorators for function based views and mixins for class based views
+
+```python
