@@ -10,9 +10,11 @@
     <p>Total Books: {{ num_books }}</p>
     <p>Total Available: {{ num_instances_available }}</p>
     {% if user.is_authenticated %}
-      <p>You are autenticated as {{ user.get_username }}</p>
+      <p>You are authenticated as {{ user.get_username }}</p>
+      <a href="{% url 'logout' %}?next={{ request.path }}">Click Here to Logout!</a>
     {% else %}
       <p>You are not logged in</p>
+      <a href="{% url 'login' %}?next={{ request.path }}">Click Here to Login!</a>
     {% endif %}
   </body>
 </html>
