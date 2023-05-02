@@ -907,4 +907,53 @@ Now that authentication and redirect work, we need to decorate view to have them
 
 To do this, you use decorators for function based views and mixins for class based views
 
+
+When logged in or logged out you can add next? routing so that they stay on current page when logged in or out
+
+```html
+<a href="{% url 'login' %}?next={{ request.path }}">Login</a>
+```
+
+
+### Function Based Views
+
+First create a function based view
+
 ```python
+    def my_view(request):
+    return render(request, "catalog/my_view.html")
+ ```
+
+ Create my_view.html
+
+```html
+<h1>LOGGED IN USERS ONLY!</h1>
+```
+
+To restrict this based on security decorate the function
+
+```python
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def my_view(request):
+    return render(request, "catalog/my_view.html")
+
+
+# register the view in urls.py
+urlpatterns = [
+    path("my_view/", views.my_view, name="my-view"),
+]
+```
+
+For Class based view use a mixing
+
+```python
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class BookCreate(LoginRequiredMixin, CreateView):  # book_form.html
+    model = Book
+    fields = "__all__"
+    # initial = {"date_of_death": "05/01/2018"}
+```
+
