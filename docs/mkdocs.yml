@@ -1,9 +1,11 @@
 site_name: Django Class Documentation
 markdown_extensions:
-  - nl2br
-  - admonition
-  - pymdownx.details
   - pymdownx.superfences
+  - attr_list
+  - md_in_html
 
 theme:
   name: material
+  features:
+    - content.code.copy
+    - content.code.annotate

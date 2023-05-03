@@ -1,9 +1,20 @@
 # Starting a New Project
 
+
+Lorem ipsum dolor sit amet, (1) consectetur adipiscing elit.
+{ .annotate }
+
+1.  :man_raising_hand: I'm an annotation! I can contain `code`, __formatted
+    text__, images, ... basically anything that can be expressed in Markdown.
+
+
 ## Set up virtual environment
 
 ```bash
-conda create --name python=3.11
+conda create --name python=3.11 (1) some text
+{.annotate}
+
+1.  This can be ran on python 3.10 also
 ```
 
 Now activate the environment and install required packages
@@ -956,4 +967,43 @@ class BookCreate(LoginRequiredMixin, CreateView):  # book_form.html
     fields = "__all__"
     # initial = {"date_of_death": "05/01/2018"}
 ```
+
+## User Authentication Forms
+
+You can use the built in "User" object for authentication, but you can also create your own model and form for authentication.  This is useful if you want to add additional fields to the user model.
+
+To use the built in user model we need to import the form
+
+
+```python
+    from django.contrib.auth.forms import UserCreationForm
+```
+
+Then we can use this form in the view
+ 
+```python
+    class SignUp(CreateView):
+        form_class = UserCreationForm
+        success_url = reverse_lazy("login")
+        template_name = "catalog/signup.html"
+```
+
+Catalog/signup.html doesn't exist yet, so create it
+
+```html
+<h1>Sign Up</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Sign Up</button>
+</form>
+```
+
+Register with urls.py
+
+```python
+    path("signup/", views.SignUp.as_view(), name="signup"),
+```
+
+## User Page Permissions
 
